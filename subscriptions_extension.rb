@@ -7,13 +7,6 @@ class SubscriptionsExtension < Spree::Extension
   url "http://yourwebsite.com/subscription"
   
   def activate
-    Admin::BaseController.class_eval do
-      before_filter :add_subscription_tab
-    
-      def add_subscription_tab
-   		 @extension_tabs << [:subscriptions]
-      end
-    end
 
 	  Payment.class_eval do
  			belongs_to :subscription
