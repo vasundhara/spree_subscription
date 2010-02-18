@@ -49,6 +49,9 @@ class SubscriptionsExtension < Spree::Extension
 		Checkout.class_eval do
 			before_save :subscriptions_check
 			private 
+			def process_creditcard?
+			  order and creditcard and not creditcard[:number].blank?
+			end
 			def subscriptions_check
 				return unless process_creditcard?
 				

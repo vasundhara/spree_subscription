@@ -1,6 +1,0 @@
-duration:
-  name: subscription-duration
-  presentation: Duration
-interval:
-  name: subscription-interval
-  presentation: Interval
