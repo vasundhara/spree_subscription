@@ -1,7 +1,7 @@
 SUMMARY
 =======
 
-This was forked from http://github.com/BDQ/spree-subscriptions. The objective is to adapt Brian's extension to Spree edge.
+This was forked from [http://github.com/BDQ/spree-subscriptions](http://github.com/BDQ/spree-subscriptions). The objective is to adapt Brian's extension to Spree edge.
 
 This extension allows you to make variants subscribable and uses its own internal billing process to handle the recurring charges. It relies on your payment gateway provider's credit card storage API to save credit card details and then uses a cron job to handle payments (and credit card expiry notifications).
 
@@ -12,15 +12,15 @@ INSTALLATION
 
 1. Install this extension
 
-      script/extension install git://github.com/pkordel/spree-subscriptions.git
+      `script/extension install git://github.com/pkordel/spree-subscriptions.git`
 
 2. Run pending migrations
 
-      rake db:migrate
+      `rake db:migrate`
 
 3. The extension includes a whenever (gem) schedule to setup a cron job to process billing / notifications, to generate the cron job run the following:
 
-			whenever --load-file -w vendor/extensions/subscriptions/config/schedule.rb 
+      `whenever --load-file -w vendor/extensions/subscriptions/config/schedule.rb`
 			
 4. Using the admin interface you should now have a "Subscribable" drop-down list when adding / editing variants. If you select True on this drop down and the then set the subscription option types which are:
 	
