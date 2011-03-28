@@ -6,13 +6,13 @@
 <table class="index">
   <thead>
     <tr>
-      <th><%= order @search, :by => :created_at,       :as => t("order_date") %></th>
-      <th><%= order @search, :by => :id,               :as => t("subscription_number") %></th>
-      <th><%= order @search, :by => :state,            :as => t("status") %></th>
-      <th><%= order @search, :by => :user_email,       :as => t("customer") %></th>
-      <th><%= order @search, :by => :start_date,       :as => t("start_date") %></th>
-      <th><%= order @search, :by => :end_date,         :as => t("end_date") %></th>
-      <th><%= order @search, :by => :total,            :as => t("total") %></th>
+      <th><%= t("order_date") %></th>
+      <th><%= t("subscription_number") %></th>
+      <th><%= t("status") %></th>
+      <th><%= t("customer") %></th>
+      <th><%= t("start_date") %></th>
+      <th><%= t("end_date") %></th>
+      <th><%= t("total") %></th>
     </tr>
   </thead>
   <tbody>
