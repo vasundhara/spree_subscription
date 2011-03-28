@@ -1,0 +1,4 @@
+<% unless @product.has_variants? %>
+  <%= f.label :subscribable %>
+  <%= f.check_box :subscribable %>
+<% end %>
