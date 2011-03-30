@@ -1,9 +1,9 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_subscriptions'
-  s.version     = '0.0.1'
-  s.summary     = 'Add gem summary here'
-  s.description = 'Add (optional) gem description here'
+  s.version     = '0.0.2'
+  s.summary     = 'Make products or variants subscribable'
+  s.description = 'Make products or variants subscribable'
   s.required_ruby_version = '>= 1.9.2'
 
   s.files         = `git ls-files`.split("\n")
