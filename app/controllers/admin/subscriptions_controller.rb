@@ -1,3 +1,4 @@
+#TODO: Fix this
 class Admin::SubscriptionsController < Admin::BaseController
   resource_controller
   before_filter :load_object, :only => [:fire]

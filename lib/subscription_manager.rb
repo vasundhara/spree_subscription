@@ -53,7 +53,9 @@ class SubscriptionManager
 		end
 	end
 
+  #Toto: Fix this
 	def SubscriptionManager.check_for_creditcard_expiry(subscriptions)
+    return #Not implemented for rails 3 yet.
 
 		subscriptions.each do |sub|
 			next unless sub.creditcard.expiry_date.expiration < (Time.now + 3.months)
