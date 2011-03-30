@@ -19,6 +19,7 @@ Order.class_eval do
                                             :duration => duration, 
                                             :user => order.user, 
                                             :variant => line_item.variant, 
+                                            :price    => line_item.price,
                                             :creditcard => order.creditcards[0],
                                             :created_by_order_id => order.id )
         

@@ -13,9 +13,6 @@ class SubscriptionManager
 			next unless sub.next_payment <= Time.now()
 			#subscription due for renewal
 			
-			#re-curring payment
-			amount = sub.variant.price
-
       #Create a new order
       orig_order = Order.find( sub.created_by_order_id )
 
@@ -28,8 +25,9 @@ class SubscriptionManager
       new_order.email        = orig_order.email
       new_order.save
 
-      #Add a line item from the variant on this sub
+      #Add a line item from the variant on this sub and set the price
       new_order.add_variant( sub.variant )
+      new_order.line_items.first.price = sub.price
       new_order.save
 
       #Process payment for the order
