@@ -17,9 +17,38 @@ class SubscriptionManager
 			amount = sub.variant.price
 
       #Create a new order
-      #Add a line item
-      #Process payment for the order
+      orig_order = Order.find( sub.created_by_order_id )
 
+      new_order = Order.new
+      new_order.save!
+      
+      new_order.user = orig_order.user
+      new_order.bill_address = orig_order.bill_address
+      new_order.ship_address = orig_order.ship_address
+      new_order.email        = orig_order.email
+      new_order.save
+
+      #Add a line item from the variant on this sub
+      new_order.add_variant( sub.variant )
+      new_order.save
+
+      #Process payment for the order
+      orig_payment = orig_order.payments.first
+      new_payment = Payment.new
+      new_payment.amount            = order.total 
+      new_payment.source            = orig_payment.source
+      new_payment.source_type       = orig_payment.source_type
+      new_payment.payment_method_id = orig_payment.payment_method_id
+
+      new_order.payments << new_payment
+
+      #By setting to confirm we can do new_order.next and we get all the same
+      #callbacks as if you were on the order form itself
+      new_order.state = 'confirm'
+      new_order.next
+      new_order.save
+
+      #update the next_due date
 		end
 	end
 

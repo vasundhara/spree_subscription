@@ -19,7 +19,8 @@ Order.class_eval do
                                             :duration => duration, 
                                             :user => order.user, 
                                             :variant => line_item.variant, 
-                                            :creditcard => order.creditcards[0] )
+                                            :creditcard => order.creditcards[0],
+                                            :created_by_order_id => order.id )
         
         #add dummy first payment (real payment was taken by normal checkout)
         #payment = CreditcardPayment.create(:subscription => subscription, :amount => line_item.variant.price, :type => "CreditcardPayment", :creditcard => cc)
