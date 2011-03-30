@@ -46,9 +46,10 @@ class SubscriptionManager
       #callbacks as if you were on the order form itself
       new_order.state = 'confirm'
       new_order.next
-      new_order.save
+      new_order.save!
 
       #update the next_due date
+      sub.renew
 		end
 	end
 

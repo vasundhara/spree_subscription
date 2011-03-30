@@ -27,16 +27,10 @@ class Subscription < ActiveRecord::Base
   end
  	
 	def due_on
-		self.active? ? self.start_date + eval(self.duration.to_s + "." + self.interval.to_s) : nil
+    next_payment
 	end
 	
 	def renew
-		set_dates
-	end
-	
-	private
-	def set_dates
-		self.start_date = Time.now if self.start_date.nil?
-		self.end_date = Time.now + eval(self.duration.to_s + "." + self.interval.to_s)
+    self.update_attribute( :next_payment, Time.now + eval(self.duration.to_s + "." + self.interval.to_s) )
 	end
 end
