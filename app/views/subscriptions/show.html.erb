@@ -16,16 +16,20 @@
         <td><%= @subscription.duration %> <%= @subscription.interval %></td>
       </tr>
       <tr>
-        <td><%= t('start_date') %></td>        
-        <td><%= @subscription.start_date.nil? ? "-" : @subscription.start_date.to_date %></td>
+        <td><%= t('created_at') %></td>        
+        <td><%= @subscription.created_at.nil? ? "-" : @subscription.created_at.to_date %></td>
       </tr>
       <tr>
-        <td><%= t('end_date') %></td>        
-        <td><%= @subscription.end_date.nil? ? "-" : @subscription.end_date.to_date %></td>
+        <td><%= t('next_payment') %></td>        
+        <td><%= @subscription.next_payment.nil? ? "-" : @subscription.next_payment.to_date %></td>
+      </tr>
+      <tr>
+        <td><%= t('creditcard') %></td>        
+        <td><%= @subscription.creditcard.nil? ? "-" : 'XXXX-XXXX-XXXX-' + @subscription.creditcard.last_digits %></td>
       </tr>
       <tr>
         <td><%= t('total') %></td>        
-        <td><%= number_to_currency @subscription.variant.price %></td>
+        <td><%= number_to_currency @subscription.price %></td>
       </tr>
       </tr>
     </tbody>
