@@ -36,7 +36,8 @@
   </table>
   <br />
   <div class='toolbar order-links'>
-    <%= link_to "Update Credit Card", edit_subscription_creditcard_url(@subscription, @subscription.creditcard) %>
+    <%= link_to "Update Credit Card", edit_subscription_creditcard_url(@subscription, @subscription.creditcard) %> |
+    <%= link_to "Cancel Subscription", subscription_cancel_path(@subscription), :method => :put, :confirm => 'Are You Sure?' %>
  
   </div>
   <br/>

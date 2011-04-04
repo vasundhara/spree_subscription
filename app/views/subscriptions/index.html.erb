@@ -1,3 +1,6 @@
 <% @subscriptions.each do |s| %>
-  <li><%= link_to s.variant.product.name, subscription_path( s ) %></li>
+  <li>
+    <%= link_to s.variant.product.name, subscription_path( s ) %>
+    (<%= s.state %>)
+  </li>
 <% end %>

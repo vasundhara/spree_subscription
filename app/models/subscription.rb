@@ -5,8 +5,6 @@ class Subscription < ActiveRecord::Base
 	has_many :payments, :dependent => :destroy, :order => :created_at
 	has_many :expiry_notifications
 	
-	before_save :set_dates
-	
 	state_machine :state, :initial => 'active' do
     event :cancel do
       transition :to => 'canceled', :if => :allow_cancel?
