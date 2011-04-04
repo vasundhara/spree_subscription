@@ -13,5 +13,5 @@ Gem::Specification.new do |s|
 
   s.has_rdoc = true
 
-  s.add_dependency('spree_core', '>= 0.50.99')
+  s.add_dependency('spree_core', '>= 0.50.00')
 end

@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
-  resources :subscriptions, :has_many => [:creditcards]
+ 
+  scope "/account" do
+    resources :subscriptions do
+      resources :creditcards
+    end
+  end
   
   namespace "admin" do
 	  resources :subscriptions, :has_many => [:payments, :creditcards], :member => {:fire => :put}
