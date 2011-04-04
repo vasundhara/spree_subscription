@@ -42,12 +42,12 @@ task :default => [ :spec ]
 desc "Regenerates a rails 3 app for testing"
 task :test_app do
   require '../spree/lib/generators/spree/test_app_generator'
-  class SubscriptionsextTestAppGenerator < Spree::Generators::TestAppGenerator
+  class SpreeSubscriptionsTestAppGenerator < Spree::Generators::TestAppGenerator
 
     def install_gems
       inside "test_app" do
         run 'rake spree_core:install'
-        run 'rake subscriptionsext:install'
+        run 'rake spree_subscriptions:install'
       end
     end
 
@@ -64,7 +64,7 @@ gem 'subscriptionsext', :path => \'#{File.dirname(__FILE__)}\'
     end
 
   end
-  SubscriptionsextTestAppGenerator.start
+  SpreeSubscriptionsTestAppGenerator.start
 end
 
 namespace :test_app do

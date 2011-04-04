@@ -1,4 +1,4 @@
-namespace :subscriptionsext do
+namespace :spree_subscriptions do
   desc "Copies all migrations and assets (NOTE: This will be obsolete with Rails 3.1)"
   task :install do
     Rake::Task['spree_subscriptions:install:migrations'].invoke
