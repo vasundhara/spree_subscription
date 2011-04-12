@@ -1,6 +1,6 @@
 spree_subscriptions
 ===============================================================================
-Provides subscribable functionality for your products/variants. #test changes
+Provides subscribable functionality for your products/variants.
 
 Installation
 ===============================================================================
