@@ -35,9 +35,13 @@ class Subscription < ActiveRecord::Base
 
   def cancel_in_authorize_net
     if SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && !self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field ).nil?
-      arb_sub_id = self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field )
-    
-      Gateway.current.provider.cancel_recurring( arb_sub_id )
+      #Only cancel if either this sub is canceled or we have a legitimate CC to
+      #transfer to.
+      if self.state == 'canceled' || ( self.creditcard && !self.creditcard.gateway_payment_profile_id.nil? )
+        arb_sub_id = self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field )
+      
+        Gateway.current.provider.cancel_recurring( arb_sub_id )
+      end
     end
   end
 end
