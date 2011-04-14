@@ -1,6 +1,6 @@
 Order.class_eval do
   
-  def subscriptions_check
+  def finalize_with_subscriptions_check!
     order = self #I'm lazy and want to see if this solves the problem.
     
     order.line_items.each do |line_item|
@@ -30,10 +30,13 @@ Order.class_eval do
         #subscription.save
       end
     end
+    finalize_without_subscriptions_check!
   end
 
-  alias_method :original_finalize!, :finalize!
-  alias_method :finalize!, :subscriptions_check
+  alias_method_chain :finalize!, :subscriptions_check
 
+  def contains_subscription?
+    line_items.any? { |line_item| line_item.variant.subscribable? }
+  end
   
-end
+end unless LineItem.instance_methods.include? :finalize_with_subscriptions_check!

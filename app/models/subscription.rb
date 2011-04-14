@@ -5,7 +5,7 @@ class Subscription < ActiveRecord::Base
 	has_many :payments, :dependent => :destroy, :order => :created_at
 	has_many :expiry_notifications
 
-  after_save :cancel_in_authorize_net, :if => SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions
+  after_update :cancel_in_authorize_net, :if => SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions
 	
 	state_machine :state, :initial => 'active' do
     event :cancel do
