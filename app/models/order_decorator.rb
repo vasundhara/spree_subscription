@@ -35,5 +35,8 @@ Order.class_eval do
 
   alias_method_chain :finalize!, :subscriptions_check
 
+  def contains_subscription?
+    line_items.any? { |line_item| line_item.variant.subscribable? }
+  end
   
 end unless LineItem.instance_methods.include? :finalize_with_subscriptions_check!
