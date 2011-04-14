@@ -17,6 +17,7 @@ If you are currently using authorize.net ARB subscriptions for your users, you
 can migrate those users to your own self hosted solution by providing a field in the
 subscription table and then setting up some config values in an initalizer like
 so:
+
     SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions = true
     SpreeSubscriptions::Config.authorizenet_subscription_id_field       = 'authorizenet_subscription_id' 
    
@@ -24,6 +25,7 @@ so:
 arb subscription id value. If that field doesn't exist in your subscription
 model you will get errors.** Something like the following could work to build
 the field:
+
     rails generate migration add_arb_reference_to_subscriptions authorizenet_subscription_id:integer
 
 You will still need to provide your own migration to move your data to the
