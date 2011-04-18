@@ -1,18 +1,17 @@
 include ActionView::Helpers::DateHelper
 	
 class SubscriptionManager
-	def SubscriptionManager.process
-		subscriptions = Subscription.find(:all, :conditions => {:state => 'active'})
-		check_for_renewals(subscriptions)
-		check_for_creditcard_expiry(subscriptions)
-	end
+  def SubscriptionManager.process
+    subscriptions = Subscription.find(:all, :conditions => {:state => 'active'})
+    check_for_renewals(subscriptions)
+    check_for_creditcard_expiry(subscriptions)
+  end
 
-	def SubscriptionManager.check_for_renewals(subscriptions)
-
-		subscriptions.each do |sub|
-			next unless sub.next_payment <= Time.now()
-			#subscription due for renewal
-			
+  def SubscriptionManager.check_for_renewals(subscriptions)
+    subscriptions.each do |sub|
+      next unless sub.next_payment <= Time.now()
+      #subscription due for renewal
+                  
       #Create a new order
       orig_order = Order.find( sub.created_by_order_id )
 
@@ -48,39 +47,38 @@ class SubscriptionManager
 
       #update the next_due date
       sub.renew
-		end
-	end
+    end
+  end
 
   #Toto: Fix this
-	def SubscriptionManager.check_for_creditcard_expiry(subscriptions)
+  def SubscriptionManager.check_for_creditcard_expiry(subscriptions)
     return #Not implemented for rails 3 yet.
 
-		subscriptions.each do |sub|
-			next unless sub.creditcard.expiry_date.expiration < (Time.now + 3.months)
-			
-			#checks for credit cards due to expiry with all the following ranges
-			[1.day, 3.days, 1.week, 2.weeks, 3.weeks, 1.month, 2.months, 3.months].each do |interval|
-				within =  distance_of_time_in_words(Time.now, Time.now + interval)
-							 
-				if sub.creditcard.expiry_date.expiration.to_time < (Time.now + interval) && sub.end_date.to_time > (Time.now + interval) 
-					
-					unless ExpiryNotification.exists?(:subscription_id => sub.id, :interval => interval.seconds.to_i)
-						notification = ExpiryNotification.create(:subscription_id => sub.id, :interval => interval.seconds)
-						SubscriptionMailer.deliver_expiry_warning(sub, within)
-					end
+    subscriptions.each do |sub|
+      next unless sub.creditcard.expiry_date.expiration < (Time.now + 3.months)
+      
+      #checks for credit cards due to expiry with all the following ranges
+      [1.day, 3.days, 1.week, 2.weeks, 3.weeks, 1.month, 2.months, 3.months].each do |interval|
+        within =  distance_of_time_in_words(Time.now, Time.now + interval)
+                                        
+        if sub.creditcard.expiry_date.expiration.to_time < (Time.now + interval) && sub.end_date.to_time > (Time.now + interval) 
+          unless ExpiryNotification.exists?(:subscription_id => sub.id, :interval => interval.seconds.to_i)
+            notification = ExpiryNotification.create(:subscription_id => sub.id, :interval => interval.seconds)
+            SubscriptionMailer.deliver_expiry_warning(sub, within)
+          end
 
-					break
-				end
-			end
-			
-			#final check if credit card has actually expired
-			if sub.creditcard.expiry_date.expiration < Time.now 
-				sub.expire
-				SubscriptionMailer.deliver_creditcard_expired(sub)
-			end
-			
-		end		
-	end
+          break
+        end
+      end
+      
+      #final check if credit card has actually expired
+      if sub.creditcard.expiry_date.expiration < Time.now 
+        sub.expire
+        SubscriptionMailer.deliver_creditcard_expired(sub)
+      end
+          
+    end		
+  end
 
 end
 
