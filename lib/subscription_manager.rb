@@ -1,13 +1,13 @@
 include ActionView::Helpers::DateHelper
 	
 class SubscriptionManager
-  def SubscriptionManager.process
+  def self.process
     subscriptions = Subscription.find(:all, :conditions => {:state => 'active'})
     check_for_renewals(subscriptions)
     check_for_creditcard_expiry(subscriptions)
   end
 
-  def SubscriptionManager.check_for_renewals(subscriptions)
+  def self.check_for_renewals(subscriptions)
     subscriptions.each do |sub|
       next unless sub.next_payment <= Time.now()
       #subscription due for renewal
@@ -51,7 +51,7 @@ class SubscriptionManager
   end
 
   #Toto: Fix this
-  def SubscriptionManager.check_for_creditcard_expiry(subscriptions)
+  def self.check_for_creditcard_expiry(subscriptions)
     return #Not implemented for rails 3 yet.
 
     subscriptions.each do |sub|
