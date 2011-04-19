@@ -9,7 +9,7 @@ class SubscriptionManager
 
   def self.check_for_renewals(subscriptions)
     subscriptions.each do |sub|
-      next unless sub.next_payment <= Time.now()
+      next unless sub.next_payment_at <= Time.now()
       #subscription due for renewal
                   
       #Create a new order
