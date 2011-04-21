@@ -32,7 +32,7 @@ class SubscriptionManager
       #Process payment for the order
       orig_payment = orig_order.payments.first
       new_payment = Payment.new
-      new_payment.amount            = order.total 
+      new_payment.amount            = new_order.total 
       new_payment.source            = orig_payment.source
       new_payment.source_type       = orig_payment.source_type
       new_payment.payment_method_id = orig_payment.payment_method_id
