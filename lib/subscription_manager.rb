@@ -13,7 +13,7 @@ class SubscriptionManager
       #subscription due for renewal
                   
       #Create a new order
-      orig_order = Order.find( sub.created_by_order_id )
+      orig_order = sub.parent_order
 
       new_order = Order.new
       new_order.save!
