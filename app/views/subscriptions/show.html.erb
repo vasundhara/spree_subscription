@@ -20,8 +20,8 @@
         <td><%= @subscription.created_at.nil? ? "-" : @subscription.created_at.to_date %></td>
       </tr>
       <tr>
-        <td><%= t('next_payment') %></td>        
-        <td><%= @subscription.next_payment.nil? ? "-" : @subscription.next_payment.to_date %></td>
+        <td><%= t('next_payment_at') %></td>        
+        <td><%= @subscription.next_payment_at.nil? ? "-" : @subscription.next_payment_at.to_date %></td>
       </tr>
       <tr>
         <td><%= t('creditcard') %></td>        
