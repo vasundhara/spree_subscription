@@ -31,7 +31,7 @@ class Subscription < ActiveRecord::Base
 	end
 	
 	def renew
-    self.update_attribute( :next_payment_at, Time.now + eval(self.duration.to_s + "." + self.interval.to_s) )
+    self.update_attribute( :next_payment_at, next_payment_at + eval(self.duration.to_s + "." + self.interval.to_s) )
 	end
 
   def cancel_in_authorize_net
