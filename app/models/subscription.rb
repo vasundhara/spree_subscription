@@ -39,6 +39,7 @@ class Subscription < ActiveRecord::Base
       arb_sub_id = self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field )
     
       Gateway.current.provider.cancel_recurring( arb_sub_id )
+      self.update_attribute( SpreeSubscriptions::Config.authorizenet_subscription_id_field, nil )
     end
   end
 
