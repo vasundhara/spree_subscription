@@ -22,6 +22,7 @@ Order.class_eval do
                                             :user => order.user, 
                                             :variant => line_item.variant, 
                                             :price    => line_item.price,
+                                            :next_payment_at => Time.now + eval(duration.to_s + "." + interval.to_s),
                                             :creditcard => order.creditcards[0],
                                             :created_by_order_id => order.id )
         
