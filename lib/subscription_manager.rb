@@ -28,6 +28,7 @@ class SubscriptionManager
       new_order.add_variant( sub.variant )
       new_order.line_items.first.price = sub.price
       new_order.save
+      new_order.update! #updating totals
 
       #Process payment for the order
       orig_payment = orig_order.payments.first
