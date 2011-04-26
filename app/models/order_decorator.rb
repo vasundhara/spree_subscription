@@ -40,5 +40,9 @@ Order.class_eval do
   def contains_subscription?
     line_items.any? { |line_item| line_item.variant.subscribable? }
   end
+
+  def created_by_subscription?
+    self.parent_subscription.present?
+  end
   
 end unless LineItem.instance_methods.include? :finalize_with_subscriptions_check!
