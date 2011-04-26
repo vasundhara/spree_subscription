@@ -15,7 +15,7 @@ class SubscriptionManager
       #Create a new order
       orig_order = sub.parent_order
 
-      new_order = Order.new
+      new_order = sub.subsequent_orders.build
       new_order.save!
       
       new_order.user = orig_order.user
