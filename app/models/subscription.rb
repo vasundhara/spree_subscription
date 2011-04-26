@@ -70,4 +70,8 @@ class Subscription < ActiveRecord::Base
     order.completed_at = Time.now
     order.save!
   end
+
+  def latest_subsequent_order
+    self.subsequent_orders.order('created_at DESC').first
+  end
 end
