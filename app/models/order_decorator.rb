@@ -31,7 +31,7 @@ Order.class_eval do
         #subscription.payments << payment
         #subscription.save
       end
-    end
+    end unless order.created_by_subscription? #Does not add subscription if the order is created from the subscription manager ie it is a subsequent order
     finalize_without_subscriptions_check!
   end
 
