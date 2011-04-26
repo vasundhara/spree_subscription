@@ -62,7 +62,7 @@ class Subscription < ActiveRecord::Base
     payment = Payment.new
     payment.amount            = order.total 
     payment.response_code = transaction_id
-    payment.state = 'complete'
+    payment.state = 'completed'
     payment.payment_method = PaymentMethod.find_by_type_and_environment("Gateway::AuthorizeNet", Rails.env)
 
     order.payments << payment
