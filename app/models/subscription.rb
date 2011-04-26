@@ -5,6 +5,7 @@ class Subscription < ActiveRecord::Base
         belongs_to :parent_order, :class_name => "Order", :foreign_key => :created_by_order_id
 	has_many :payments, :dependent => :destroy, :order => :created_at
 	has_many :expiry_notifications
+        has_many :subsequent_orders, :class_name => "Order", :foreign_key => :created_by_subscription_id
 
   after_update :cancel_in_authorize_net, :if => SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions
 	

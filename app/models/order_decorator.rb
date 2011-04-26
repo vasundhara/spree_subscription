@@ -1,4 +1,6 @@
 Order.class_eval do
+
+  belongs_to :parent_subscription, :foreign_key => :created_by_subscription_id, :class_name => "Subscription"
   
   def finalize_with_subscriptions_check!
     order = self #I'm lazy and want to see if this solves the problem.
