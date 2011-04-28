@@ -4,3 +4,9 @@
     (<%= s.state %>)
   </li>
 <% end %>
+
+<% if @subscription.length < 1 %>
+  <div>
+    You don't have any subscriptions setup at this time. <br />
+  </div>
+<% end %>
