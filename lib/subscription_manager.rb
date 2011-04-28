@@ -13,9 +13,9 @@ class SubscriptionManager
       #subscription due for renewal
                   
       #Create a new order
-      orig_order = Order.find( sub.created_by_order_id )
+      orig_order = sub.parent_order
 
-      new_order = Order.new
+      new_order = sub.subsequent_orders.build
       new_order.save!
       
       new_order.user = orig_order.user
@@ -28,6 +28,7 @@ class SubscriptionManager
       new_order.add_variant( sub.variant )
       new_order.line_items.first.price = sub.price
       new_order.save
+      new_order.update! #updating totals
 
       #Process payment for the order
       orig_payment = orig_order.payments.first

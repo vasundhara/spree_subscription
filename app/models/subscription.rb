@@ -3,10 +3,10 @@ class Subscription < ActiveRecord::Base
 	belongs_to :variant
 	belongs_to :creditcard
         belongs_to :parent_order, :class_name => "Order", :foreign_key => :created_by_order_id
-	has_many :payments, :dependent => :destroy, :order => :created_at
 	has_many :expiry_notifications
+        has_many :subsequent_orders, :class_name => "Order", :foreign_key => :created_by_subscription_id
 
-  after_update :cancel_in_authorize_net, :if => SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions
+        after_update :cancel_in_authorize_net, :if => Proc.new { SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions }
 	
 	state_machine :state, :initial => 'active' do
     event :cancel do
@@ -31,18 +31,15 @@ class Subscription < ActiveRecord::Base
 	end
 	
 	def renew
-    self.update_attribute( :next_payment_at, Time.now + eval(self.duration.to_s + "." + self.interval.to_s) )
+    self.update_attribute( :next_payment_at, next_payment_at + eval(self.duration.to_s + "." + self.interval.to_s) )
 	end
 
   def cancel_in_authorize_net
     if SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && !self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field ).nil?
-      #Only cancel if either this sub is canceled or we have a legitimate CC to
-      #transfer to.
-      if self.state == 'canceled' || ( self.creditcard && !self.creditcard.gateway_payment_profile_id.nil? )
-        arb_sub_id = self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field )
-      
-        Gateway.current.provider.cancel_recurring( arb_sub_id )
-      end
+      arb_sub_id = self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field )
+    
+      Gateway.current.provider.cancel_recurring( arb_sub_id )
+      self.update_attribute( SpreeSubscriptions::Config.authorizenet_subscription_id_field, nil )
     end
   end
 
@@ -64,6 +61,7 @@ class Subscription < ActiveRecord::Base
     payment = Payment.new
     payment.amount            = order.total 
     payment.response_code = transaction_id
+    payment.state = 'completed'
     payment.payment_method = PaymentMethod.find_by_type_and_environment("Gateway::AuthorizeNet", Rails.env)
 
     order.payments << payment
@@ -71,5 +69,9 @@ class Subscription < ActiveRecord::Base
     order.state = 'complete'
     order.completed_at = Time.now
     order.save!
+  end
+
+  def latest_subsequent_order
+    self.subsequent_orders.order('created_at DESC').first
   end
 end
