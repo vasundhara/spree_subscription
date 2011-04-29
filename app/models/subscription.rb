@@ -70,6 +70,7 @@ class Subscription < ActiveRecord::Base
     order.payment_state = 'paid'
     order.completed_at = Time.now
     order.save!
+    order
   end
 
   def latest_subsequent_order
