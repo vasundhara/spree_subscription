@@ -63,7 +63,6 @@ class Subscription < ActiveRecord::Base
     payment.amount = amount
     payment.response_code = transaction_id
     payment.state = 'completed'
-    payment.save
 
     order.payments << payment
 
