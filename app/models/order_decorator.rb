@@ -1,4 +1,5 @@
 Order.class_eval do
+  has_many :subscriptions, :foreign_key => :created_by_order_id
 
   belongs_to :parent_subscription, :foreign_key => :created_by_subscription_id, :class_name => "Subscription"
   
