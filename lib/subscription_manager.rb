@@ -28,7 +28,6 @@ class SubscriptionManager
       new_order.add_variant( sub.variant )
       new_order.line_items.first.price = sub.price
       new_order.save
-      new_order.update! #updating totals
 
       #Process payment for the order
       orig_payment = orig_order.payments.first
@@ -39,6 +38,7 @@ class SubscriptionManager
       new_payment.payment_method_id = orig_payment.payment_method_id
 
       new_order.payments << new_payment
+      new_order.update! #updating totals
 
       #By setting to confirm we can do new_order.next and we get all the same
       #callbacks as if you were on the order form itself
@@ -46,8 +46,13 @@ class SubscriptionManager
       new_order.next
       new_order.save!
 
-      #update the next_due date
-      sub.renew
+      if new_order.payment_state != 'failed'
+        #update the next_due date
+        sub.renew
+      else
+        sub.state = "error"
+        sub.save
+      end
     end
   end
 
