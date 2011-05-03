@@ -85,10 +85,13 @@ class Subscription < ActiveRecord::Base
   end
 
   def self.populate_legacy_addresses
+    temp = SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions
+    SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions = false
     self.where('authorizenet_subscription_id > 0').each do |subscription|
       donation_schedule = DonationSchedule.find_by_authorizenet_subscription_id(subscription.authorizenet_subscription_id)
       subscription.legacy_address = donation_schedule.order_header.address
       subscription.save
     end
+    SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions = temp
   end
 end
