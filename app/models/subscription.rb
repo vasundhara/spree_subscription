@@ -2,6 +2,8 @@ class Subscription < ActiveRecord::Base
 	belongs_to :user
 	belongs_to :variant
 	belongs_to :creditcard
+  belongs_to :legacy_address, :class_name => "Address"
+
         belongs_to :parent_order, :class_name => "Order", :foreign_key => :created_by_order_id
 	has_many :expiry_notifications
         has_many :subsequent_orders, :class_name => "Order", :foreign_key => :created_by_subscription_id
@@ -70,10 +72,23 @@ class Subscription < ActiveRecord::Base
     order.payment_state = 'paid'
     order.completed_at = Time.now
     order.save!
+
+    order.bill_address = self.legacy_address
+    order.ship_address = self.legacy_address
+    order.save!
+
     order
   end
 
   def latest_subsequent_order
     self.subsequent_orders.order('created_at DESC').first
+  end
+
+  def self.populate_legacy_addresses
+    self.where('authorizenet_subscription_id > 0').each do |subscription|
+      donation_schedule = DonationSchedule.find_by_authorizenet_subscription_id(subscription.authorizenet_subscription_id)
+      subscription.legacy_address = donation_schedule.order_header.address
+      subscription.save
+    end
   end
 end
