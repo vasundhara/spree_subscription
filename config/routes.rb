@@ -4,8 +4,7 @@ Rails.application.routes.draw do
     resources :subscriptions do
       put 'cancel'
       
-      resources :creditcards do
-      end
+      resources :creditcards
     end
   end
   
