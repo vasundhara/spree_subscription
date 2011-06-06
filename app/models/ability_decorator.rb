@@ -15,6 +15,16 @@ class AbilityDecorator
         subscription.user == user 
       end
       can :create, Subscription
+
+      can :index, Creditcard 
+      can :read, Creditcard do |cc|
+        cc.subscriptions.first.user == user 
+      end
+      can :update, Creditcard do |cc|
+        cc.subscriptions.first.user == user 
+      end
+      can :create, Creditcard
+      
     end
   end
 end
