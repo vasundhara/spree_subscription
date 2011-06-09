@@ -2,7 +2,7 @@ class SubscriptionManager
   include ActionView::Helpers::DateHelper
 
   def self.process
-    subscriptions = Subscription.find(:all, :conditions => {:state => 'active'})
+    subscriptions = Subscription.find(:all, :conditions => {:state => 'active', :authorizenet_subscription_id => nil})
     check_for_renewals(subscriptions)
 #   check_for_creditcard_expiry(subscriptions)
   end
