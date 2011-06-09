@@ -40,7 +40,8 @@ class Subscription < ActiveRecord::Base
     if SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && !self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field ).nil?
       arb_sub_id = self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field )
     
-      Gateway.current.provider.cancel_recurring( arb_sub_id )
+      gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNet", :active => true, :environment => Rails.env})
+      gateway.provider.cancel_recurring( arb_sub_id )
       self.update_attribute( SpreeSubscriptions::Config.authorizenet_subscription_id_field, nil )
     end
   end
