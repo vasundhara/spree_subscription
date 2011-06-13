@@ -26,7 +26,9 @@ class SubscriptionManager
 
       #Add a line item from the variant on this sub and set the price
       new_order.add_variant( sub.variant )
-      new_order.line_items.first.price = sub.price
+      #NOTE settting quantity as opposed to price becuase during processing payments the order and price will get flipped
+      new_order.line_items.first.quantity = sub.price #doing this will clip a price like 8.8 to 8)
+      new_order.line_items.first.price = 1
       new_order.save
 
       #Process payment for the order
