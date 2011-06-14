@@ -24,8 +24,8 @@ class Subscription < ActiveRecord::Base
     end
   end
 
-  scope :cim_subscriptions, lambda{{:conditions => {SpreeSubscriptions::Config.authorizenet_subscription_id_field.to_sym => nil}}}
-  scope :arb_subscriptions, lambda{{:conditions => "#{SpreeSubscriptions::Config.authorizenet_subscription_id_field} IS NOT NULL"}}
+  scope :cim_subscriptions, lambda{{:conditions => "next_payment_at IS NOT NULL"}}
+  scope :arb_subscriptions, lambda{{:conditions => {:next_payment_at => nil}}}
 
   def allow_cancel?
     self.state != 'canceled'
@@ -40,7 +40,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def is_cim? 
-    self.send(SpreeSubscriptions::Config.authorizenet_subscription_id_field.to_sym).nil? ? true:false
+    self.next_payment_at.nil? ? false : true
   end
 
   def is_arb?
