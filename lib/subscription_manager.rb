@@ -13,31 +13,59 @@ class SubscriptionManager
       #subscription due for renewal
                   
       #Create a new order
-      orig_order = sub.parent_order
+      recently_migrated_from_arb_to_cim?  = sub.parent_order.nil? true : false
 
-      new_order = sub.subsequent_orders.build
-      new_order.save!
-      
-      new_order.user = orig_order.user
-      new_order.bill_address = orig_order.bill_address
-      new_order.ship_address = orig_order.ship_address
-      new_order.email        = orig_order.email
-      new_order.save
 
-      #Add a line item from the variant on this sub and set the price
-      new_order.add_variant( sub.variant )
-      #NOTE settting quantity as opposed to price becuase during processing payments the order and price will get flipped
-      new_order.line_items.first.quantity = sub.price #doing this will clip a price like 8.8 to 8)
-      new_order.line_items.first.price = 1
-      new_order.save
 
-      #Process payment for the order
-      orig_payment = orig_order.payments.first
-      new_payment = Payment.new
-      new_payment.amount            = new_order.total 
-      new_payment.source            = orig_payment.source
-      new_payment.source_type       = orig_payment.source_type
-      new_payment.payment_method_id = orig_payment.payment_method_id
+      if recently_migrated_from_arb_to_cim? 
+
+        new_order = sub.build_parent_order
+        new_order.user = sub.user
+        new_order.bill_address = sub.legacy_address
+        new_order.ship_address = sub.legacy_address
+        new_order.email = sub.user.email
+        new_order.save
+
+        new_order.add_variant( sub.variant )
+        #NOTE settting quantity as opposed to price becuase during processing payments the order and price will get flipped
+        new_order.line_items.first.quantity = sub.price #doing this will clip a price like 8.8 to 8)
+        new_order.line_items.first.price = 1
+        new_order.save
+
+        new_payment = Payment.new
+        new_payment.amount = sub.price
+        mew_payment.source = sub.creditcard
+        new_payment.source_type = "Creditcard"
+        new_payment.payment_method = PaymentMethod.find_by_type_and_environment("Gateway::AuthorizeNetCim", Rails.env)
+
+      else
+
+        new_order = sub.subsequent_orders.build
+        new_order.save!
+        
+        template_order = sub.parent_order
+        new_order.user = template_order.user
+        new_order.bill_address = template_order.bill_address
+        new_order.ship_address = template_order.ship_address
+        new_order.email        = template_order.email
+        new_order.save
+
+        #Add a line item from the variant on this sub and set the price
+        new_order.add_variant( sub.variant )
+        #NOTE settting quantity as opposed to price becuase during processing payments the order and price will get flipped
+        new_order.line_items.first.quantity = sub.price #doing this will clip a price like 8.8 to 8)
+        new_order.line_items.first.price = 1
+        new_order.save
+
+        #Process payment for the order
+        template_payment = template_order.payments.first
+        new_payment = Payment.new
+        new_payment.amount            = new_order.total 
+        new_payment.source            = template_payment.source
+        new_payment.source_type       = template_payment.source_type
+        new_payment.payment_method_id = template_payment.payment_method_id
+
+      end
 
       new_order.payments << new_payment
       new_order.update! #updating totals
@@ -55,6 +83,7 @@ class SubscriptionManager
         sub.state = "error"
         sub.save
       end
+
     end
   end
 
