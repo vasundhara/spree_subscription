@@ -51,7 +51,7 @@ class Subscription < ActiveRecord::Base
 
 
   def cancel_arb_in_authorize_net
-    if SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && !self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field ).nil?
+    if SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && self.is_arb?
       arb_sub_id = self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field )
     
       gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNet", :active => true, :environment => Rails.env})
