@@ -26,6 +26,7 @@ class Subscription < ActiveRecord::Base
 
   scope :cim_subscriptions, lambda{{:conditions => "next_payment_at IS NOT NULL"}}
   scope :arb_subscriptions, lambda{{:conditions => {:next_payment_at => nil}}}
+  scope :active, lambda{{:conditions => {:state => "active"}}}
 
   def allow_cancel?
     self.state != 'canceled'
