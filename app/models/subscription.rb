@@ -1,40 +1,40 @@
 class Subscription < ActiveRecord::Base
-	belongs_to :user
-	belongs_to :variant
-	belongs_to :creditcard
+  belongs_to :user
+  belongs_to :variant
+  belongs_to :creditcard
   belongs_to :legacy_address, :class_name => "Address"
 
-        belongs_to :parent_order, :class_name => "Order", :foreign_key => :created_by_order_id
-	has_many :expiry_notifications
-        has_many :subsequent_orders, :class_name => "Order", :foreign_key => :created_by_subscription_id
+  belongs_to :parent_order, :class_name => "Order", :foreign_key => :created_by_order_id
+  has_many :expiry_notifications
+  has_many :subsequent_orders, :class_name => "Order", :foreign_key => :created_by_subscription_id
 
-        after_update :cancel_in_authorize_net, :if => Proc.new { SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions }
-	
-	state_machine :state, :initial => 'active' do
+  after_update :cancel_in_authorize_net, :if => Proc.new { SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions }
+  
+  state_machine :state, :initial => 'active' do
     event :cancel do
       transition :to => 'canceled', :if => :allow_cancel?
     end
 
-		event :expire do
-			transition :to => 'expired', :from => 'active'
-		end
-		
-		event :reactivate do
-			transition :to => 'active', :from => 'expired'
-		end
-	end
+    event :expire do
+      transition :to => 'expired', :from => 'active'
+    end
+    
+    event :reactivate do
+      transition :to => 'active', :from => 'expired'
+    end
+  end
 
-	def allow_cancel?
+  def allow_cancel?
     self.state != 'canceled'
   end
  	
-	def due_on
+  def due_on
     next_payment_at
-	end
+  end
 	
-	def renew
+  def renew
     self.update_attribute( :next_payment_at, next_payment_at + eval(self.duration.to_s + "." + self.interval.to_s) )
-	end
+  end
 
   def cancel_in_authorize_net
     if SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && !self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field ).nil?
