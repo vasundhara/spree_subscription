@@ -91,6 +91,9 @@ class Subscription < ActiveRecord::Base
     order.bill_address = self.legacy_address
     order.ship_address = self.legacy_address
     order.save!
+    
+    self.subsequent_orders << order
+    self.save
 
     order
   end
