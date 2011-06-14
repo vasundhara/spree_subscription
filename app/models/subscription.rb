@@ -24,6 +24,9 @@ class Subscription < ActiveRecord::Base
     end
   end
 
+  scope :cim_subscriptions, lambda{{:conditions => {SpreeSubscriptions::Config.authorizenet_subscription_id_field.to_sym => nil}}}
+  scope :arb_subscriptions, lambda{{:conditions => "#{SpreeSubscriptions::Config.authorizenet_subscription_id_field} IS NOT NULL"}}
+
   def allow_cancel?
     self.state != 'canceled'
   end
