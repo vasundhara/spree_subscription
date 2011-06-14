@@ -56,7 +56,6 @@ class Subscription < ActiveRecord::Base
     
       gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNet", :active => true, :environment => Rails.env})
       gateway.provider.cancel_recurring( arb_sub_id )
-      self.update_attribute( SpreeSubscriptions::Config.authorizenet_subscription_id_field, nil )
     end
   end
 
