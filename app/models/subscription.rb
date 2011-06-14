@@ -39,6 +39,15 @@ class Subscription < ActiveRecord::Base
     self.update_attribute( :next_payment_at, next_payment_at + eval(self.duration.to_s + "." + self.interval.to_s) )
   end
 
+  def is_cim? 
+    self.send(SpreeSubscriptions::Config.authorizenet_subscription_id_field.to_sym).nil? ? true:false
+  end
+
+  def is_arb?
+    !is_cim?
+  end
+
+
   def cancel_in_authorize_net
     if SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && !self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field ).nil?
       arb_sub_id = self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field )
