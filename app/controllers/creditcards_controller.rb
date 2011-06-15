@@ -11,6 +11,7 @@ class CreditcardsController < ApplicationController
     # accidentally create a duplicate
     if @subscription.is_arb?
       object.address = @subscription.legacy_address
+      object.save
       @subscription.creditcard = object
       @subscription.save
       gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
