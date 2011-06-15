@@ -22,6 +22,7 @@ class SubscriptionManager
         new_order.bill_address = sub.legacy_address
         new_order.ship_address = sub.legacy_address
         new_order.email = sub.user.email
+        new_order.parent_subscription = sub #this order becomes both a subsequent order and the parent order to avoid creating another subscription 
         new_order.save
 
         new_order.add_variant( sub.variant )
