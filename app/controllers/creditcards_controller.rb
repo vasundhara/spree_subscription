@@ -8,10 +8,11 @@ class CreditcardsController < ApplicationController
     # cim_gateway gets us the actual AuthorizeNetCIM from ActiveMerchant
     # and we have to delete the old profile because we don't want to
     # accidentally create a duplicate
-    Gateway.cim_gateway.delete_customer_profile( @subscription.creditcard.gateway_customer_profile_id ) unless @subscription.creditcard.gateway_customer_profile_id.nil?
+    gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
+    gateway.delete_customer_profile( @subscription.creditcard.gateway_customer_profile_id ) unless @subscription.creditcard.gateway_customer_profile_id.nil?
 
     # Create the payment profile for this card
-    Gateway.current.create_profile_from_card( @subscription.creditcard )
+    gateway.create_profile_from_card( @subscription.creditcard )
   end
 
   private
