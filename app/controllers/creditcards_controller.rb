@@ -3,6 +3,7 @@ class CreditcardsController < ApplicationController
   resource_controller
 
   update.success.wants.html { redirect_to subscription_url(@subscription) }
+  create.success.wants.html { redirect_to subscription_url(@subscription) }
 
   update.after do
     # cim_gateway gets us the actual AuthorizeNetCIM from ActiveMerchant
