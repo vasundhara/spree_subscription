@@ -56,6 +56,7 @@ class Subscription < ActiveRecord::Base
     
       gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNet", :active => true, :environment => Rails.env})
       gateway.provider.cancel_recurring( arb_sub_id )
+      self.next_payment_at = 1.month.from_now
     end
   end
 
