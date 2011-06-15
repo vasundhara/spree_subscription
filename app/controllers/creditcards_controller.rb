@@ -5,7 +5,7 @@ class CreditcardsController < ApplicationController
   update.success.wants.html { redirect_to subscription_url(@subscription) }
   create.success.wants.html { redirect_to subscription_url(@subscription) }
 
-  update.after do
+  create.after do
     # cim_gateway gets us the actual AuthorizeNetCIM from ActiveMerchant
     # and we have to delete the old profile because we don't want to
     # accidentally create a duplicate
