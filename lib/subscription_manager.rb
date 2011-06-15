@@ -13,11 +13,9 @@ class SubscriptionManager
       #subscription due for renewal
                   
       #Create a new order
-      recently_migrated_from_arb_to_cim?  = sub.parent_order.nil? true : false
+      recently_migrated_from_arb_to_cim  = sub.parent_order.nil? ? true : false
 
-
-
-      if recently_migrated_from_arb_to_cim? 
+      if recently_migrated_from_arb_to_cim 
 
         new_order = sub.build_parent_order
         new_order.user = sub.user
@@ -34,7 +32,7 @@ class SubscriptionManager
 
         new_payment = Payment.new
         new_payment.amount = sub.price
-        mew_payment.source = sub.creditcard
+        new_payment.source = sub.creditcard
         new_payment.source_type = "Creditcard"
         new_payment.payment_method = PaymentMethod.find_by_type_and_environment("Gateway::AuthorizeNetCim", Rails.env)
 
