@@ -8,7 +8,7 @@ class Subscription < ActiveRecord::Base
   has_many :expiry_notifications
   has_many :subsequent_orders, :class_name => "Order", :foreign_key => :created_by_subscription_id
 
-  after_update :cancel_arb_in_authorize_net, :if => Proc.new { SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && Rails.env.production?}
+  #after_update :cancel_arb_in_authorize_net, :if => Proc.new { SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && Rails.env.production?}
   
   state_machine :state, :initial => 'active' do
     event :cancel do
