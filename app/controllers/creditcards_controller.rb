@@ -5,12 +5,6 @@ class CreditcardsController < ApplicationController
   update.success.wants.html { redirect_to subscription_url(@subscription) }
 
   update.after do
-    if @subscription.state == "expired"
-  #			@subscription.reactive
-  #		
-  #		SubscriptionMailer.deliver_subscription_reactivated(@subscription) 
-    end
-
     # cim_gateway gets us the actual AuthorizeNetCIM from ActiveMerchant
     # and we have to delete the old profile because we don't want to
     # accidentally create a duplicate
