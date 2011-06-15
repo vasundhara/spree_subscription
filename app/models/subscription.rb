@@ -22,6 +22,8 @@ class Subscription < ActiveRecord::Base
     event :reactivate do
       transition :to => 'active', :from => 'expired'
     end
+    
+    before_transition :on => :cancel, :do => :cancel_arb_in_authorize_net
   end
 
   scope :cim_subscriptions, lambda{{:conditions => "next_payment_at IS NOT NULL"}}
@@ -51,15 +53,21 @@ class Subscription < ActiveRecord::Base
 
 
   def cancel_arb_in_authorize_net
-    if SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && self.is_arb?
+    if self.is_arb?
       arb_sub_id = self.send( SpreeSubscriptions::Config.authorizenet_subscription_id_field )
-    
       gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNet", :active => true, :environment => Rails.env})
       gateway.provider.cancel_recurring( arb_sub_id )
+    end
+  end
+
+  def migrate_arb_to_cim
+    if SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && self.is_arb?
+      self.cancel_arb_in_authorize_net
       self.next_payment_at = 1.month.from_now
       self.save
     end
   end
+
 
   # I'm not sure why we need to save so much here.  I don't like it, but tests fail if we don't.
   def create_legacy_order(transaction_id, amount)

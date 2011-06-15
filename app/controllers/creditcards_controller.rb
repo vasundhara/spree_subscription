@@ -19,7 +19,7 @@ class CreditcardsController < ApplicationController
 
       # Create the payment profile for this card
       gateway.create_profile_from_card( @subscription.creditcard )
-      @subscription.cancel_arb_in_authorize_net
+      @subscription.migrate_arb_to_cim
     end
   end
 
