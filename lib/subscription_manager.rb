@@ -11,6 +11,7 @@ class SubscriptionManager
     subscriptions.each do |sub|
       next unless sub.next_payment_at <= Time.now()
       #subscription due for renewal
+      puts "Processing Subscription with id #{sub.id}"
                   
       #Create a new order
       recently_migrated_from_arb_to_cim  = sub.parent_order.nil? ? true : false
@@ -75,12 +76,16 @@ class SubscriptionManager
       new_order.next
       new_order.save!
 
+      puts "Order number: #{sub.subsequent_orders.last.number} created"
+
       if new_order.payment_state != 'failed'
         #update the next_due date
         sub.renew
+        puts "Subscription renewed. Note: There could be possible declines at Authorize.net"
       else
         sub.state = "error"
         sub.save
+        puts "There was an error proccesing the subscription. Subscription state set to 'error'"
       end
 
     end
