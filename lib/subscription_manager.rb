@@ -2,14 +2,13 @@ class SubscriptionManager
   include ActionView::Helpers::DateHelper
 
   def self.process
-    subscriptions = Subscription.cim_subscriptions.active
-    check_for_renewals(subscriptions)
+    subscriptions = Subscription.cim_subscriptions.active.backlog
+    renew(subscriptions)
 #   check_for_creditcard_expiry(subscriptions)
   end
 
-  def self.check_for_renewals(subscriptions)
+  def self.renew(subscriptions)
     subscriptions.each do |sub|
-      next unless sub.next_payment_at <= Time.now()
       #subscription due for renewal
       puts "Processing Subscription with id #{sub.id}"
                   
