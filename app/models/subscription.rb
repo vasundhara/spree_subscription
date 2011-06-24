@@ -105,6 +105,8 @@ class Subscription < ActiveRecord::Base
     self.subsequent_orders << order
     self.save
 
+    order.update_totals
+
     order
   end
 
