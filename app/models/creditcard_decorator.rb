@@ -1,3 +1,3 @@
 Creditcard.class_eval	do
-  has_many :subscriptions
+  has_one :subscription
 end
