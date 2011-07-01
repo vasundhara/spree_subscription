@@ -52,6 +52,14 @@ class Subscription < ActiveRecord::Base
     !is_cim?
   end
 
+  def migrated_from_arb?
+    if self.is_cim? && self.authorizenet_subscription_id != nil
+      true
+    else
+      false
+    end
+  end
+
 
   def cancel_arb_in_authorize_net
     if self.is_arb?
