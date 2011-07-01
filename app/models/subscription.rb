@@ -53,11 +53,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def migrated_from_arb?
-    if self.is_cim? && self.authorizenet_subscription_id != nil
-      true
-    else
-      false
-    end
+    ( self.is_cim? && self.authorizenet_subscription_id != nil ) ? true : false
   end
 
   def backlogged? 
