@@ -60,6 +60,10 @@ class Subscription < ActiveRecord::Base
     end
   end
 
+  def backlogged? 
+    self.next_payment_at <= Time.now ? true : false
+  end
+
 
   def cancel_arb_in_authorize_net
     if self.is_arb?
