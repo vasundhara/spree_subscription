@@ -21,7 +21,7 @@
       </tr>
       <tr>
         <td><%= t('next_payment_at') %></td>        
-        <td><%= @subscription.next_payment_at.nil? ? "-" : @subscription.next_payment_at.to_date %></td>
+        <td><%= ( @subscription.next_payment_at.nil? || @subscription.state == 'canceled' ) ? "-" : @subscription.next_payment_at.to_date %></td>
       </tr>
       <tr>
         <td><%= t('creditcard') %></td>        
@@ -36,9 +36,10 @@
   </table>
   <br />
   <div class='toolbar order-links'>
-    <%= link_to "Update Credit Card", edit_subscription_creditcard_url(@subscription, @subscription.creditcard) if @subscription.creditcard %> |
-    <%= link_to "Cancel Subscription", subscription_cancel_path(@subscription), :method => :put, :confirm => 'Are You Sure?' %>
- 
+    <% if @subscription.state != 'canceled' %>
+      <%= link_to "Update Credit Card", edit_subscription_creditcard_url(@subscription, @subscription.creditcard) if @subscription.creditcard %> |
+      <%= link_to "Cancel Subscription", subscription_cancel_path(@subscription), :method => :put, :confirm => 'Are You Sure?' %>
+    <% end %>
   </div>
   <br/>
   <%= link_to t('back_to_store'), products_path %>
