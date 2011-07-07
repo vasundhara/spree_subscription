@@ -16,11 +16,15 @@ class Subscription < ActiveRecord::Base
     end
 
     event :expire do
-      transition :to => 'expired', :from => 'active'
+      transition :to => 'expired'
     end
     
     event :reactivate do
-      transition :to => 'active', :from => 'expired'
+      transition :to => 'active', :from => ['expired', 'error']
+    end
+
+    event :error do
+      transition :to => 'error'
     end
     
     before_transition :on => :cancel, :do => :cancel_arb_in_authorize_net
