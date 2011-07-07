@@ -77,14 +77,13 @@ class SubscriptionManager
 
       puts "Order number: #{sub.subsequent_orders.last.number} created"
 
-      if new_order.payment_state != 'failed'
+      if new_order.payments.last.state == 'completed'
         #update the next_due date
         sub.renew
-        puts "Subscription renewed. Note: There could be possible declines at Authorize.net"
+        puts "Subscription renewed"
       else
-        sub.state = "error"
-        sub.save
-        puts "There was an error proccesing the subscription. Subscription state set to 'error'"
+        sub.error 
+        puts "There was an error proccesing the subscription. Subscription state set to 'error'. Subscription not renewed"
       end
 
     end
