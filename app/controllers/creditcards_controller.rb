@@ -15,7 +15,6 @@ class CreditcardsController < ApplicationController
       @subscription.creditcard = object
       @subscription.save
       gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
-      gateway.send(:cim_gateway).delete_customer_profile( @subscription.creditcard.gateway_customer_profile_id ) unless @subscription.creditcard.gateway_customer_profile_id.nil?
 
       # Create the payment profile for this card
       gateway.create_profile_from_card( @subscription.creditcard )
