@@ -18,7 +18,7 @@ class CreditcardsController < ApplicationController
     gateway.create_customer_payment_profile_from_card(@creditcard)
     if @creditcard.update_attributes(params[:creditcard])
       @creditcard.address.save if @creditcard.address #NOTE for some reason update_attributes is not saving the address to the database :( :( :(
-      if subscription.state != 'active'
+      if @subscription.state != 'active'
         @subscription.reactivate
       end
       flash[:notice] = "Payment method for subscription was updated successfully"
