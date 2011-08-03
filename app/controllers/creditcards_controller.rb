@@ -19,7 +19,6 @@ class CreditcardsController < ApplicationController
     params[:creditcard][:address_attributes][:lastname] = params[:creditcard][:last_name]
     gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
     if @creditcard.update_attributes(params[:creditcard])
-    #  @creditcard.address.save if @creditcard.address #NOTE for some reason update_attributes is not saving the address to the database :( :( :(
       gateway.create_customer_payment_profile_from_card(@creditcard)
       if @subscription.state != 'active'
         @subscription.reactivate
