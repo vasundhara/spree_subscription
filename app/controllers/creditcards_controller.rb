@@ -10,6 +10,7 @@ class CreditcardsController < ApplicationController
   end
   def edit
     @creditcard = Creditcard.find(params[:id])
+    @address = @creditcard.build_address if @creditcard.address.nil?
   end
 
   def update
