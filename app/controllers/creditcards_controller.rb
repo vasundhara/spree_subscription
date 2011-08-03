@@ -28,7 +28,7 @@ class CreditcardsController < ApplicationController
       redirect_to subscription_path(@subscription) 
     else
       flash[:error]  = "There was a problem updating payment method for this subscription. Please try again"
-      redirect_to = edit_subscription_creditcard(@creditcard)
+      render :action => "edit"
     end
   end
 
