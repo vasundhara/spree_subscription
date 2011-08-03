@@ -15,6 +15,8 @@ class CreditcardsController < ApplicationController
 
   def update
     @creditcard = Creditcard.find(params[:id])
+    params[:creditcard][:address_attributes][:firstname] = params[:creditcard][:first_name]
+    params[:creditcard][:address_attributes][:lastname] = params[:creditcard][:last_name]
     gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
     if @creditcard.update_attributes(params[:creditcard])
       @creditcard.address.save if @creditcard.address #NOTE for some reason update_attributes is not saving the address to the database :( :( :(
