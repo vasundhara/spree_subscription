@@ -10,11 +10,13 @@ class CreditcardsController < ApplicationController
   end
   def edit
     @creditcard = Creditcard.find(params[:id])
+    @creditcard.updating_from_user_account = true
     @address = @creditcard.build_address if @creditcard.address.nil?
   end
 
   def update
     @creditcard = Creditcard.find(params[:id])
+    @creditcard.updating_from_user_account = true
     params[:creditcard][:address_attributes][:firstname] = params[:creditcard][:first_name]
     params[:creditcard][:address_attributes][:lastname] = params[:creditcard][:last_name]
     gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
