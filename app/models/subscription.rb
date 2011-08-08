@@ -9,6 +9,9 @@ class Subscription < ActiveRecord::Base
   has_many :subsequent_orders, :class_name => "Order", :foreign_key => :created_by_subscription_id
 
   #after_update :cancel_arb_in_authorize_net, :if => Proc.new { SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && Rails.env.production?}
+
+  validates :price, :presence => true, :numericality => true
+  validate :check_whole_dollar_amount
   
   state_machine :state, :initial => 'active' do
     event :cancel do
@@ -40,6 +43,10 @@ class Subscription < ActiveRecord::Base
     self.state != 'canceled'
   end
  	
+  def check_whole_dollar_amount
+    errors.add(:price, "should be whole dollar amount") if self.price.to_i != self.price
+  end
+
   def due_on
     next_payment_at
   end
