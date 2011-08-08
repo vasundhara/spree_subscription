@@ -34,7 +34,6 @@ class SubscriptionManager
         new_payment = Payment.new
         new_payment.amount = sub.price
         new_payment.source = sub.creditcard
-        new_payment.source_type = "Creditcard"
         new_payment.payment_method = PaymentMethod.find_by_type_and_environment("Gateway::AuthorizeNetCim", Rails.env)
 
       else
@@ -61,7 +60,6 @@ class SubscriptionManager
         new_payment = Payment.new
         new_payment.amount            = new_order.total 
         new_payment.source            = template_payment.source
-        new_payment.source_type       = template_payment.source_type
         new_payment.payment_method_id = template_payment.payment_method_id
 
       end
