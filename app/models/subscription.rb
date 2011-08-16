@@ -10,6 +10,8 @@ class Subscription < ActiveRecord::Base
 
   #after_update :cancel_arb_in_authorize_net, :if => Proc.new { SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && Rails.env.production?}
 
+  accepts_nested_attributes_for :creditcard
+  
   validates :price, :presence => true, :numericality => true
   validate :check_whole_dollar_amount
   
