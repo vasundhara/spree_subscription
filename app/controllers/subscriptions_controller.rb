@@ -9,7 +9,7 @@ class SubscriptionsController < ApplicationController
   end
   
   update.after do
-    if @object.is_arb?
+    if @object.is_arb? && @object.creditcard.present?
       gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
       gateway.create_profile_from_card(@object.creditcard)
       @object.migrate_arb_to_cim
