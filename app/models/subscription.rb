@@ -25,14 +25,17 @@ class Subscription < ActiveRecord::Base
     end
     
     event :reactivate do
-      transition :to => 'active', :from => ['expired', 'error']
+      transition :to => 'active', :from => ['expired', 'error', 'declined']
     end
 
-    event :error do
-      transition :to => 'error'
+    event :declined do
+      transition 'active' => 'error', :if => :third_decline?
+      transition 'active' =>  same
     end
     
     before_transition :on => :cancel, :do => :cancel_arb_in_authorize_net
+    before_transition :on => :reactivate, :do => :sanctify
+    before_transition :on => :declined, :do => :bump_up_declined_count
   end
 
   scope :cim_subscriptions, lambda{{:conditions => "next_payment_at IS NOT NULL"}}
@@ -91,6 +94,15 @@ class Subscription < ActiveRecord::Base
   end
 
 
+  def reset_declined_count
+    self.update_attribute(:declined_count , 0)
+  end
+
+
+  def third_decline? 
+    self.declined_count >= 2
+  end
+
   # I'm not sure why we need to save so much here.  I don't like it, but tests fail if we don't.
   def create_legacy_order(transaction_id, amount)
     order = Order.new
@@ -144,5 +156,16 @@ class Subscription < ActiveRecord::Base
       subscription.save
     end
     SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions = temp
+  end
+
+  private
+
+  def sanctify
+    #method to reset the subscription before it is reactivated. Other related logic can go in this. 
+    self.declined_count = 0
+  end
+  
+  def bump_up_declined_count
+    self.declined_count += 1
   end
 end
