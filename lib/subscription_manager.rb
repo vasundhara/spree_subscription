@@ -77,14 +77,11 @@ class SubscriptionManager
 
       sub.renew
       if new_order.payments.last.state == 'completed'
-        #update the next_due date
         sub.reset_declined_count
         puts "Subscription renewed"
       else
-        #NOTE Set correct state here
         sub.declined
         SubscriptionsMailer.declined_creditcard_message(subscription).deliver
-        #renew?
         puts "There was an error proccesing the subscription. Subscription state set to 'error'. Subscription not renewed"
       end
 
@@ -98,7 +95,6 @@ class SubscriptionManager
         SubscriptionsMailer.expiring_creditcard_message(subscription).deliver
       elsif creditcard.year == Date.today.year && (creditcard.month == 1.month.ago.month)
         subscription.expire
-        #are we allowing renewing expired subscriptions? 
         SubscriptionsMailer.expired_creditcard_message(subscription).deliver
       end
     end
