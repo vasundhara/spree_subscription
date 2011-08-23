@@ -47,6 +47,10 @@ class Subscription < ActiveRecord::Base
   def allow_cancel?
     self.state != 'canceled'
   end
+  
+  def inactive?
+    self.state != 'active'
+  end
  	
   def check_whole_dollar_amount
     errors.add(:price, "should be whole dollar amount") if self.price.to_i != self.price
