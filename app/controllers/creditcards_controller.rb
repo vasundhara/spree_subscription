@@ -8,32 +8,6 @@ class CreditcardsController < ApplicationController
     @creditcard = Creditcard.new
     @address = @creditcard.build_address
   end
-  def edit
-    @creditcard = Creditcard.find(params[:id])
-    @creditcard.updating_from_user_account = true
-    @address = @creditcard.build_address if @creditcard.address.nil?
-  end
-
-  def update
-    @creditcard = Creditcard.find(params[:id])
-    @creditcard.updating_from_user_account = true
-    gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
-    if @creditcard.update_attributes(params[:creditcard])
-      gateway.create_customer_payment_profile_from_card(@creditcard)
-      if @subscription.state != 'active'
-        @subscription.reactivate
-      end
-      flash[:notice] = "Payment method for subscription was updated successfully"
-      redirect_to subscription_path(@subscription) 
-    else
-      flash[:error]  = "There was a problem updating payment method for this subscription. Please try again"
-      render :action => "edit"
-    end
-  end
-
-
-  #update.success.wants.html { redirect_to subscription_path(@subscription) }
-  #create.success.wants.html { redirect_to subscription_path(@subscription) }
 
   def create 
     # cim_gateway gets us the actual AuthorizeNetCIM from ActiveMerchant
@@ -48,6 +22,7 @@ class CreditcardsController < ApplicationController
         gateway.create_profile_from_card( @subscription.creditcard )
         @subscription.migrate_arb_to_cim
       end
+      @subscription.reactivate if @subscription.inactive? 
       flash[:notice] = "Payment method for subscription was updated successfully"
       redirect_to subscription_path(@subscription) 
     else
@@ -55,6 +30,32 @@ class CreditcardsController < ApplicationController
       render :action => 'new'
     end
   end
+  
+  def edit
+    @creditcard = Creditcard.find(params[:id])
+    @creditcard.updating_from_user_account = true
+    @address = @creditcard.build_address if @creditcard.address.nil?
+  end
+
+  def update
+    @creditcard = Creditcard.find(params[:id])
+    @creditcard.updating_from_user_account = true
+    gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
+    if @creditcard.update_attributes(params[:creditcard])
+      gateway.create_customer_payment_profile_from_card(@creditcard)
+      @subscription.reactivate if @subscription.inactive? 
+      flash[:notice] = "Payment method for subscription was updated successfully"
+      redirect_to subscription_path(@subscription) 
+    else
+      flash[:error]  = "There was a problem updating payment method for this subscription. Please try again"
+      render :action => "edit"
+    end
+  end
+
+
+  #update.success.wants.html { redirect_to subscription_path(@subscription) }
+  #create.success.wants.html { redirect_to subscription_path(@subscription) }
+
 
   private
   def load_data
