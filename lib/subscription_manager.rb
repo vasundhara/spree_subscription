@@ -90,10 +90,11 @@ class SubscriptionManager
 
   def self.check_for_creditcard_expiry(subscriptions)
     subscriptions.each do |subscription|
-      creditcard = subscription.creditcard
-      if creditcard.year == Date.today.year && (creditcard.month == Date.today.month || creditcard.month == 1.month.from_now)
+      expiring_month = subscription.creditcard.month.to_i
+      expiring_year = subscription.creditcard.year.to_i
+      if expiring_year == Date.today.year && (expiring_month == Date.today.month || expiring_month == 1.month.from_now)
         SubscriptionsMailer.expiring_creditcard_message(subscription).deliver
-      elsif creditcard.year == Date.today.year && (creditcard.month == 1.month.ago.month)
+      elsif expiring_year == Date.today.year && expiring_month == 1.month.ago.month
         subscription.expire
         SubscriptionsMailer.expired_creditcard_message(subscription).deliver
       end
