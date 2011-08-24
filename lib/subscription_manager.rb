@@ -81,7 +81,7 @@ class SubscriptionManager
         puts "Subscription renewed"
       else
         sub.declined
-        SubscriptionsMailer.declined_creditcard_message(subscription).deliver
+        SubscriptionsMailer.declined_creditcard_message(sub).deliver
         puts "There was an error proccesing the subscription. Subscription state set to 'error'. Subscription not renewed"
       end
 
