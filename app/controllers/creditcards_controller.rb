@@ -46,6 +46,7 @@ class CreditcardsController < ApplicationController
     @creditcard = Creditcard.find(params[:id])
     @creditcard.updating_from_user_account = true
     gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
+    gateway.cim_gateway.delete_customer_payment_profile({:customer_profile_id => @creditcard.gateway_customer_profile_id, :customer_payment_profile_id => @creditcard.gateway_payment_profile_id})
     response = gateway.create_customer_payment_profile_from_card(@creditcard)
     if response.success?
       params[:creditcard].merge!({:gateway_payment_profile_id => response.params["customer_payment_profile_id"]})
