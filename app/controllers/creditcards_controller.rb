@@ -15,16 +15,21 @@ class CreditcardsController < ApplicationController
     # accidentally create a duplicate
     @creditcard = @subscription.build_creditcard(params[:creditcard])
     #@creditcard.address = @subscription.legacy_address
-    if @subscription.save
-      if @subscription.is_arb?
-        gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
-        # Create the payment profile for this card
-        gateway.create_profile_from_card( @subscription.creditcard )
-        @subscription.migrate_arb_to_cim
+    gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
+
+    if gateway.create_profile_from_card( @subscription.creditcard )
+      if @subscription.save
+        if @subscription.is_arb?
+          # Create the payment profile for this card
+          @subscription.migrate_arb_to_cim
+        end
+        @subscription.reactivate if @subscription.inactive? 
+        flash[:notice] = "Payment method for subscription was updated successfully"
+        redirect_to subscription_path(@subscription) 
+      else
+        flash[:error]  = "There was a problem updating payment method for this subscription. Please try again"
+        render :action => 'new'
       end
-      @subscription.reactivate if @subscription.inactive? 
-      flash[:notice] = "Payment method for subscription was updated successfully"
-      redirect_to subscription_path(@subscription) 
     else
       flash[:error]  = "There was a problem updating payment method for this subscription. Please try again"
       render :action => 'new'
@@ -41,15 +46,22 @@ class CreditcardsController < ApplicationController
     @creditcard = Creditcard.find(params[:id])
     @creditcard.updating_from_user_account = true
     gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
-    if @creditcard.update_attributes(params[:creditcard])
-      gateway.create_customer_payment_profile_from_card(@creditcard)
-      @subscription.reactivate if @subscription.inactive? 
-      flash[:notice] = "Payment method for subscription was updated successfully"
-      redirect_to subscription_path(@subscription) 
+    response = gateway.create_customer_payment_profile_from_card(@creditcard)
+    if response.success?
+      params[:creditcard].merge!({:gateway_payment_profile_id => response.params["customer_payment_profile_id"]})
+      if @creditcard.update_attributes(params[:creditcard])
+        @subscription.reactivate if @subscription.inactive? 
+        flash[:notice] = "Payment method for subscription was updated successfully"
+        redirect_to subscription_path(@subscription) 
+      else
+        flash[:error]  = "There was a problem updating payment method for this subscription. Please try again"
+        render :action => "edit"
+      end
     else
-      flash[:error]  = "There was a problem updating payment method for this subscription. Please try again"
-      render :action => "edit"
+      @creditcard.gateway_error(response) if card.respond_to? :gateway_error
+      @creditcard.source.gateway_error(response)
     end
+
   end
 
 
