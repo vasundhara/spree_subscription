@@ -46,6 +46,7 @@ class CreditcardsController < ApplicationController
     @creditcard = Creditcard.find(params[:id])
     @creditcard.updating_from_user_account = true
     gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
+    #NOTE Need to delete the profile or else gatewy throws error when changing just the expiration date
     response = gateway.send(:cim_gateway).delete_customer_payment_profile({:customer_profile_id => @creditcard.gateway_customer_profile_id, :customer_payment_profile_id => @creditcard.gateway_payment_profile_id})
 
     logger.warn "Existing payment profile was not deleted" unless response.success?
@@ -58,7 +59,7 @@ class CreditcardsController < ApplicationController
           flash[:notice] = "Payment method for subscription was updated successfully"
           redirect_to subscription_path(@subscription) 
       else
-        flash[:error]  = "Error on Gateway End:" + response.message.split('-').last
+        flash[:error]  = "Error at Gateway:" + response.message.split('-').last
         @creditcard.gateway_error(response) if @creditcard.respond_to? :gateway_error
         @creditcard.source.gateway_error(response)
       end
