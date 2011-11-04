@@ -17,8 +17,8 @@ class CreditcardsController < ApplicationController
     #@creditcard.address = @subscription.legacy_address
     gateway = Gateway.find(:first, :conditions => {:type => "Gateway::AuthorizeNetCim", :active => true, :environment => Rails.env})
 
-    if gateway.create_profile_from_card( @subscription.creditcard )
-      if @subscription.save
+    if @subscription.save
+      if gateway.create_profile_from_card( @creditcard )
         if @subscription.is_arb?
           # Create the payment profile for this card
           @subscription.migrate_arb_to_cim
@@ -27,7 +27,7 @@ class CreditcardsController < ApplicationController
         flash[:notice] = "Payment method for subscription was updated successfully"
         redirect_to subscription_path(@subscription) 
       else
-        flash[:error]  = "There was a problem updating payment method for this subscription. Please try again"
+        flash[:error]  = "Errror at Gateway. Please try again"
         render :action => 'new'
       end
     else
