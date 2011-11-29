@@ -9,6 +9,7 @@ class Subscription < ActiveRecord::Base
   has_many :subsequent_orders, :class_name => "Order", :foreign_key => :created_by_subscription_id
 
   #after_update :cancel_arb_in_authorize_net, :if => Proc.new { SpreeSubscriptions::Config.migrate_from_authorize_net_subscriptions && Rails.env.production?}
+  before_destroy :cancel_arb_in_authorize_net
 
   accepts_nested_attributes_for :creditcard
   
