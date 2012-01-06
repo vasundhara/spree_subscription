@@ -108,6 +108,14 @@ class Subscription < ActiveRecord::Base
     self.declined_count >= 2
   end
 
+  def subscription_bill_address
+    self.legacy_address || self.parent_order.bill_address
+  end
+
+  def subscription_ship_address
+    self.legacy_address || self.parent_order.ship_address
+  end
+
   # I'm not sure why we need to save so much here.  I don't like it, but tests fail if we don't.
   def create_legacy_order(transaction_id, amount)
     order = Order.new
@@ -136,8 +144,8 @@ class Subscription < ActiveRecord::Base
     order.completed_at = Time.now
     order.save!
 
-    order.bill_address = self.legacy_address
-    order.ship_address = self.legacy_address
+    order.bill_address = self.subscription_bill_address
+    order.ship_address = self.subscription_ship_address
     order.save!
     
     self.subsequent_orders << order
