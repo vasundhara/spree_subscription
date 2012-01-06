@@ -42,7 +42,7 @@ class Subscription < ActiveRecord::Base
   scope :cim_subscriptions, lambda{{:conditions => "next_payment_at IS NOT NULL"}}
   scope :arb_subscriptions, lambda{{:conditions => {:next_payment_at => nil}}}
   scope :active, lambda{{:conditions => {:state => "active"}}}
-  scope :migrated_from_arb, lambda{{:conditions => "authorizenet_subscription_id IS NOT NULL AND next_payment_at IS NOT NULL"}}
+  scope :migrated_from_arb, lambda{{:conditions => "old_authorizenet_subscription_id IS NOT NULL AND next_payment_at IS NOT NULL"}}
   scope :backlog, lambda{{:conditions => ["next_payment_at <= ? ", Time.now] }}
 
   def allow_cancel?
@@ -74,7 +74,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def migrated_from_arb?
-    ( self.is_cim? && self.authorizenet_subscription_id != nil ) ? true : false
+    ( self.is_cim? && self.old_authorizenet_subscription_id != nil ) ? true : false
   end
 
   def backlogged? 
