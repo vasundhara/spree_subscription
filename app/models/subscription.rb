@@ -73,6 +73,10 @@ class Subscription < ActiveRecord::Base
     !is_cim?
   end
 
+  def type
+    is_cim? ? "CIM" : "ARB" 
+  end
+
   def migrated_from_arb?
     ( self.is_cim? && self.old_authorizenet_subscription_id != nil ) ? true : false
   end
