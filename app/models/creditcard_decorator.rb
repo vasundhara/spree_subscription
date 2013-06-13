@@ -1,4 +1,4 @@
-Creditcard.class_eval	do
+Spree::CreditCard.class_eval	do
   has_one :subscription
   belongs_to :address
   before_update :update_last_digits

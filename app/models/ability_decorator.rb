@@ -29,4 +29,4 @@ class AbilityDecorator
   end
 end
 
-Ability.register_ability(AbilityDecorator)  
+Spree::Ability.register_ability(AbilityDecorator)  

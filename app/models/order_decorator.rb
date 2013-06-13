@@ -1,4 +1,4 @@
-Order.class_eval do
+Spree::Order.class_eval do
   has_many :subscriptions, :foreign_key => :created_by_order_id
 
   belongs_to :parent_subscription, :foreign_key => :created_by_subscription_id, :class_name => "Subscription"
@@ -24,7 +24,7 @@ Order.class_eval do
                                             :variant => line_item.variant, 
                                             :price    => line_item.price,
                                             :next_payment_at => Time.now + eval(duration.to_s + "." + interval.to_s),
-                                            :creditcard => order.creditcards[0],
+                                            :creditcard => order.credit_cards[0],
                                             :created_by_order_id => order.id )
         
         #add dummy first payment (real payment was taken by normal checkout)
@@ -47,4 +47,4 @@ Order.class_eval do
     self.parent_subscription.present?
   end
   
-end unless LineItem.instance_methods.include? :finalize_with_subscriptions_check!
+end unless Spree::LineItem.instance_methods.include? :finalize_with_subscriptions_check!

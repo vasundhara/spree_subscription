@@ -1,5 +1,5 @@
 require 'spree_core'
-require 'spree_subscriptions_hooks'
+#require 'spree_subscriptions_hooks'
 
 module SpreeSubscriptions
   class Config

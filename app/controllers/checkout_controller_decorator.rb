@@ -1,4 +1,4 @@
-CheckoutController.class_eval do
+Spree::CheckoutController.class_eval do
   before_filter :check_subscriptions_for_registration, :except => [:registration, :update_registration]
 
   private

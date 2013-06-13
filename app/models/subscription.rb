@@ -12,6 +12,8 @@ class Subscription < ActiveRecord::Base
   before_destroy :cancel_arb_in_authorize_net
 
   accepts_nested_attributes_for :creditcard
+
+  attr_accessible :interval, :duration, :user, :variant, :price, :next_payment_at, :creditcard, :created_by_order_id
   
   validates :price, :presence => true, :numericality => true
   validate :check_whole_dollar_amount
